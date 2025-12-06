@@ -13,14 +13,45 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Code Editor App',
+      title: 'Code Playground',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.deepPurple,
-          brightness: Brightness.dark,
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xFF667eea),
+          secondary: const Color(0xFF764ba2),
+          surface: const Color(0xFF1e293b),
+          background: const Color(0xFF0f172a),
+          error: const Color(0xFFf5576c),
         ),
+        scaffoldBackgroundColor: const Color(0xFF0f172a),
         useMaterial3: true,
+        cardTheme: CardThemeData(
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 4,
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFF1e293b),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF667eea), width: 2),
+          ),
+        ),
       ),
       // Initialize the CodeController when app starts
       initialBinding: BindingsBuilder(() {

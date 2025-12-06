@@ -3,9 +3,10 @@ import 'package:get/get.dart';
 import 'package:code_text_field/code_text_field.dart' as code_field;
 import 'package:highlight/languages/dart.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
+import 'dart:ui';
 import '../controllers/code_controller.dart';
 
-/// Code editor widget with syntax highlighting
+/// Code editor widget with syntax highlighting and glassmorphism
 class CodeEditorWidget extends StatefulWidget {
   const CodeEditorWidget({super.key});
 
@@ -51,62 +52,142 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFF23241F), // Monokai background color
-      padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Editor header
-          Row(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFF23241F).withOpacity(0.6),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF667eea).withOpacity(0.1),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.code, size: 16, color: Colors.white70),
-              const SizedBox(width: 8),
-              const Text(
-                'Code Editor',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontWeight: FontWeight.bold,
+              // Editor header with gradient
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      const Color(0xFF667eea).withOpacity(0.2),
+                      const Color(0xFF764ba2).withOpacity(0.2),
+                    ],
+                  ),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.white.withOpacity(0.1),
+                      width: 1,
+                    ),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                        ),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(Icons.code, size: 16, color: Colors.white),
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Code Editor',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0ea5e9), Color(0xFF2563eb)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF0ea5e9).withOpacity(0.3),
+                            blurRadius: 8,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 6,
+                            height: 6,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Text(
+                            'Dart',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const Spacer(),
-              Text(
-                'Dart',
-                style: TextStyle(
-                  color: Colors.blue[300],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+              
+              // Code editor field
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: code_field.CodeTheme(
+                    data: code_field.CodeThemeData(styles: monokaiSublimeTheme),
+                    child: SingleChildScrollView(
+                      child: code_field.CodeField(
+                        controller: _codeController,
+                        textStyle: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          height: 1.5,
+                        ),
+                        lineNumberStyle: code_field.LineNumberStyle(
+                          width: 50,
+                          textStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.3),
+                            fontSize: 12,
+                          ),
+                        ),
+                        expands: false,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-          
-          const SizedBox(height: 8),
-          
-          // Code editor field
-          Expanded(
-            child: code_field.CodeTheme(
-              data: code_field.CodeThemeData(styles: monokaiSublimeTheme),
-              child: SingleChildScrollView(
-                child: code_field.CodeField(
-                  controller: _codeController,
-                  textStyle: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 14,
-                  ),
-                  lineNumberStyle: const code_field.LineNumberStyle(
-                    width: 50,
-                    textStyle: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 12,
-                    ),
-                  ),
-                  expands: false,
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
