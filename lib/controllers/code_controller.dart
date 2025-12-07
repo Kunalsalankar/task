@@ -20,7 +20,7 @@ class CodeController extends GetxController {
     super.onInit();
     // Set initial code with a sample
     codeText.value = '''void main() {
-  print("Hello, World!")
+  print("Hello, World!");
 }''';
     consoleText.value = '';
   }
@@ -28,6 +28,65 @@ class CodeController extends GetxController {
   /// Updates the code text
   void updateCode(String newCode) {
     codeText.value = newCode;
+  }
+
+  /// Checks for syntax errors in the code
+  String? _checkSyntaxErrors(String code) {
+    final lines = code.split('\n');
+    
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i];
+      final trimmed = line.trimRight();
+      
+      // Skip empty lines and comments
+      if (trimmed.isEmpty || trimmed.startsWith('//')) {
+        continue;
+      }
+      
+      // Skip lines that are declarations (void, class, if, for, while)
+      if (trimmed.contains('void ') || 
+          trimmed.contains('class ') || 
+          trimmed.contains('if ') || 
+          trimmed.contains('for ') || 
+          trimmed.contains('while ')) {
+        continue;
+      }
+      
+      // Skip lines ending with opening or closing brace
+      if (trimmed.endsWith('{') || trimmed.endsWith('}')) {
+        continue;
+      }
+      
+      // If line already ends with semicolon, it's fine
+      if (trimmed.endsWith(';')) {
+        continue;
+      }
+      
+      // Check for print statements - they must end with );
+      if (trimmed.contains('print(')) {
+        // If it ends with ) but NOT );, it's missing a semicolon
+        if (trimmed.endsWith(')') && !trimmed.endsWith(');')) {
+          return 'Missing semicolon on line ${i + 1}';
+        }
+      }
+      
+      // Check for assignment statements that need semicolons
+      if (trimmed.contains('=') && 
+          !trimmed.contains('==') && 
+          !trimmed.contains('!=') &&
+          !trimmed.endsWith(';') &&
+          !trimmed.contains('void ') && 
+          !trimmed.contains('class ')) {
+        return 'Missing semicolon on line ${i + 1}';
+      }
+      
+      // Check for return statements
+      if (trimmed.startsWith('return') && !trimmed.endsWith(';')) {
+        return 'Missing semicolon on line ${i + 1}';
+      }
+    }
+    
+    return null;
   }
 
   /// Simulates running the code and displays output in console
@@ -41,6 +100,20 @@ class CodeController extends GetxController {
     
     // Simulate short delay for realism
     await Future.delayed(const Duration(milliseconds: 500));
+
+    // Check for syntax errors first
+    final syntaxError = _checkSyntaxErrors(codeText.value);
+    if (syntaxError != null) {
+      consoleText.value = '''⏳ Running code...
+
+❌ Compilation Error:
+   $syntaxError
+   
+💡 Tip: Use the AUTO FIX button to automatically fix this issue!
+
+❌ Process finished with exit code 1''';
+      return;
+    }
 
     // Extract all print statements and their content
     // Match print("...") or print('...')

@@ -27,30 +27,69 @@ class AutoFixService {
     for (var line in lines) {
       final trimmed = line.trimRight();
       
-      // Skip empty lines, lines with braces, or lines already ending with semicolon
-      if (trimmed.isEmpty || 
-          trimmed.endsWith('{') || 
-          trimmed.endsWith('}') ||
-          trimmed.endsWith(';') ||
-          trimmed.endsWith('(') ||
-          trimmed.endsWith(')') ||
-          trimmed.startsWith('//') ||
-          trimmed.contains('void ') ||
-          trimmed.contains('class ') ||
-          trimmed.contains('if ') ||
-          trimmed.contains('for ') ||
+      // Skip empty lines and comments
+      if (trimmed.isEmpty || trimmed.startsWith('//')) {
+        fixedLines.add(line);
+        continue;
+      }
+      
+      // Skip lines that are declarations (void, class, if, for, while)
+      if (trimmed.contains('void ') || 
+          trimmed.contains('class ') || 
+          trimmed.contains('if ') || 
+          trimmed.contains('for ') || 
           trimmed.contains('while ')) {
         fixedLines.add(line);
-      } else {
-        // Add semicolon if it looks like a statement
-        if (trimmed.contains('print(') || 
-            trimmed.contains('=') || 
-            trimmed.contains('return')) {
-          fixedLines.add('$trimmed;');
-        } else {
-          fixedLines.add(line);
-        }
+        continue;
       }
+      
+      // Skip lines ending with opening brace
+      if (trimmed.endsWith('{')) {
+        fixedLines.add(line);
+        continue;
+      }
+      
+      // Skip lines ending with closing brace
+      if (trimmed.endsWith('}')) {
+        fixedLines.add(line);
+        continue;
+      }
+      
+      // If line already ends with semicolon, keep it as is
+      if (trimmed.endsWith(';')) {
+        fixedLines.add(line);
+        continue;
+      }
+      
+      // Check for print statements that end with ) but not );
+      if (trimmed.contains('print(') && trimmed.endsWith(')') && !trimmed.endsWith(');')) {
+        // Preserve leading whitespace (indentation)
+        final leadingWhitespace = line.substring(0, line.length - trimmed.length);
+        fixedLines.add('$leadingWhitespace$trimmed;');
+        continue;
+      }
+      
+      // Check for assignment statements that need semicolons
+      if (trimmed.contains('=') && 
+          !trimmed.contains('==') && 
+          !trimmed.contains('!=') &&
+          !trimmed.endsWith(';')) {
+        // Preserve leading whitespace
+        final leadingWhitespace = line.substring(0, line.length - trimmed.length);
+        fixedLines.add('$leadingWhitespace$trimmed;');
+        continue;
+      }
+      
+      // Check for return statements
+      if (trimmed.startsWith('return') && !trimmed.endsWith(';')) {
+        // Preserve leading whitespace
+        final leadingWhitespace = line.substring(0, line.length - trimmed.length);
+        fixedLines.add('$leadingWhitespace$trimmed;');
+        continue;
+      }
+      
+      // If no changes needed, keep original line
+      fixedLines.add(line);
     }
 
     return fixedLines.join('\n');
