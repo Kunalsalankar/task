@@ -83,7 +83,7 @@ class HomeView extends StatelessWidget {
                 
                 // Code editor area
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: CodeEditorWidget(),
@@ -94,7 +94,7 @@ class HomeView extends StatelessWidget {
                 
                 // Console output area
                 Expanded(
-                  flex: 1,
+                  flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                     child: _buildConsole(controller),
