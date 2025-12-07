@@ -22,7 +22,7 @@ class CodeController extends GetxController {
     codeText.value = '''void main() {
   print("Hello, World!")
 }''';
-    consoleText.value = 'Console output will appear here...';
+    consoleText.value = '';
   }
 
   /// Updates the code text
@@ -31,20 +31,63 @@ class CodeController extends GetxController {
   }
 
   /// Simulates running the code and displays output in console
-  void runCode() {
+  Future<void> runCode() async {
     if (codeText.value.trim().isEmpty) {
-      consoleText.value = 'Error: No code to run!';
+      consoleText.value = '❌ Error: No code to run!';
       return;
     }
 
-    // Simulate code execution with fake output
-    consoleText.value = '''Running code...
--------------------
-Output:
-Hello, World!
--------------------
-Process finished with exit code 0
-Execution time: 0.${DateTime.now().millisecond}s''';
+    consoleText.value = '⏳ Running code...';
+    
+    // Simulate short delay for realism
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    // Extract all print statements and their content
+    // Match print("...") or print('...')
+    final printPatternDouble = RegExp(r'print\s*\(\s*"([^"]*)"\s*\)', multiLine: true);
+    final printPatternSingle = RegExp(r"print\s*\(\s*'([^']*)'\s*\)", multiLine: true);
+    
+    final matchesDouble = printPatternDouble.allMatches(codeText.value);
+    final matchesSingle = printPatternSingle.allMatches(codeText.value);
+    
+    final outputs = <String>[];
+    for (var match in matchesDouble) {
+      outputs.add(match.group(1) ?? '');
+    }
+    for (var match in matchesSingle) {
+      outputs.add(match.group(1) ?? '');
+    }
+    
+    if (outputs.isEmpty) {
+      // Check if there's a print statement without quotes (for variables, etc.)
+      final hasPrint = RegExp(r'print\s*\(').hasMatch(codeText.value);
+      if (hasPrint) {
+        consoleText.value = '''⏳ Running code...
+
+📤 Output:
+   (Print statement found but output cannot be determined)
+
+✅ Process finished with exit code 0''';
+      } else {
+        consoleText.value = '''⏳ Running code...
+
+📤 Output:
+   (No print statement found)
+   💡 Try adding: print("Hello, World!");
+
+✅ Process finished with exit code 0''';
+      }
+    } else {
+      
+      // Build console output with all print statements
+      final outputLines = outputs.map((out) => '   $out').join('\n');
+      consoleText.value = '''⏳ Running code...
+
+📤 Output:
+$outputLines
+
+✅ Process finished with exit code 0''';
+    }
   }
 
   /// Applies auto-fix to the current code

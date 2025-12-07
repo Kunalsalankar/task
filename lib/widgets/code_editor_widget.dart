@@ -58,19 +58,12 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF23241F).withOpacity(0.6),
+            color: const Color(0xFF1a1a1a),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Colors.white.withOpacity(0.1),
               width: 1.5,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF667eea).withOpacity(0.1),
-                blurRadius: 20,
-                spreadRadius: 2,
-              ),
-            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,12 +72,7 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF667eea).withOpacity(0.2),
-                      const Color(0xFF764ba2).withOpacity(0.2),
-                    ],
-                  ),
+                  color: const Color(0xFF2a2a2a),
                   border: Border(
                     bottom: BorderSide(
                       color: Colors.white.withOpacity(0.1),
@@ -97,9 +85,7 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
                     Container(
                       padding: const EdgeInsets.all(6),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                        ),
+                        color: const Color(0xFF2a2a2a),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Icon(Icons.code, size: 16, color: Colors.white),
@@ -118,17 +104,12 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF0ea5e9), Color(0xFF2563eb)],
-                        ),
+                        color: const Color(0xFF2a2a2a),
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF0ea5e9).withOpacity(0.3),
-                            blurRadius: 8,
-                            spreadRadius: 1,
-                          ),
-                        ],
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,

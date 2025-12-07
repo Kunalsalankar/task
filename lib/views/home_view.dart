@@ -18,10 +18,12 @@ class HomeView extends StatelessWidget {
         preferredSize: const Size.fromHeight(70),
         child: Container(
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            color: Color(0xFF1a1a1a),
+            border: Border(
+              bottom: BorderSide(
+                color: Color(0xFF2a2a2a),
+                width: 1,
+              ),
             ),
           ),
           child: AppBar(
@@ -66,15 +68,8 @@ class HomeView extends StatelessWidget {
         ),
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF0f172a),
-              const Color(0xFF1e293b).withOpacity(0.8),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+        decoration: const BoxDecoration(
+          color: Color(0xFF0f0f0f),
         ),
         child: Stack(
           children: [
@@ -84,7 +79,7 @@ class HomeView extends StatelessWidget {
                 // Action buttons row
                 _buildActionButtons(controller),
                 
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 
                 // Code editor area
                 Expanded(
@@ -95,7 +90,7 @@ class HomeView extends StatelessWidget {
                   ),
                 ),
                 
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 
                 // Console output area
                 Expanded(
@@ -124,28 +119,32 @@ class HomeView extends StatelessWidget {
   /// Builds the action buttons (Run and Auto Fix)
   Widget _buildActionButtons(CodeController controller) {
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
       child: Row(
         children: [
           // Run button with gradient
           _GradientButton(
             onPressed: controller.runCode,
-            icon: Icons.play_arrow,
+            icon: Icons.play_arrow_rounded,
             label: 'RUN CODE',
             gradient: const LinearGradient(
-              colors: [Color(0xFF10b981), Color(0xFF059669)],
+              colors: [Color(0xFF22c55e), Color(0xFF16a34a)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
           
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
           
           // Auto Fix button with gradient
           _GradientButton(
             onPressed: controller.autoFixCode,
-            icon: Icons.auto_fix_high,
+            icon: Icons.auto_fix_high_rounded,
             label: 'AUTO FIX',
             gradient: const LinearGradient(
-              colors: [Color(0xFFf59e0b), Color(0xFFd97706)],
+              colors: [Color(0xFFf59e0b), Color(0xFFe67e22)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
           
@@ -153,29 +152,38 @@ class HomeView extends StatelessWidget {
           
           // Info text with icon
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: const Color(0xFF1a1a1a),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Colors.white.withOpacity(0.1),
+                width: 1,
               ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.info_outline,
-                  size: 16,
-                  color: Colors.white.withOpacity(0.6),
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Icon(
+                    Icons.info_outline_rounded,
+                    size: 14,
+                    color: Colors.white.withOpacity(0.7),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   'Write your code and click RUN',
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.white.withOpacity(0.7),
-                    fontWeight: FontWeight.w500,
+                    color: Colors.white.withOpacity(0.85),
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ],
@@ -194,19 +202,12 @@ class HomeView extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.4),
+            color: const Color(0xFF1a1a1a),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: Colors.white.withOpacity(0.1),
               width: 1.5,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF667eea).withOpacity(0.1),
-                blurRadius: 20,
-                spreadRadius: 2,
-              ),
-            ],
           ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -218,9 +219,7 @@ class HomeView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                      ),
+                      color: const Color(0xFF2a2a2a),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: const Icon(Icons.terminal, size: 16, color: Colors.white),
@@ -236,54 +235,191 @@ class HomeView extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF10b981),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF10b981).withOpacity(0.5),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                  ),
+                  Obx(() => controller.consoleText.value.contains('Running')
+                      ? _PulsingIndicator(
+                          color: Colors.white.withOpacity(0.8),
+                        )
+                      : Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: controller.consoleText.value.contains('Error')
+                                ? const Color(0xFFef4444)
+                                : Colors.white.withOpacity(0.6),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: (controller.consoleText.value.contains('Error')
+                                        ? const Color(0xFFef4444)
+                                        : Colors.white)
+                                    .withOpacity(0.3),
+                                blurRadius: 8,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                        )),
                 ],
               ),
               
               const SizedBox(height: 12),
               
-              // Console text output with proper scrolling
               Expanded(
                 child: Container(
+                  width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1a1b26).withOpacity(0.5),
+                    color: const Color(0xFF0f0f0f),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
                       color: Colors.white.withOpacity(0.05),
                     ),
                   ),
-                  padding: const EdgeInsets.all(12),
-                  child: Obx(() => SingleChildScrollView(
-                    child: SelectableText(
-                      controller.consoleText.value,
-                      style: const TextStyle(
-                        fontFamily: 'monospace',
-                        color: Color(0xFF00ffff), // Bright cyan for better visibility
-                        fontSize: 14,
-                        height: 1.6,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )),
+                  child: Obx(() {
+                    final text = controller.consoleText.value;
+                    return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.all(14),
+                      child: _buildFormattedConsoleText(text),
+                    );
+                  }),
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  /// Builds formatted console text with syntax highlighting
+  Widget _buildFormattedConsoleText(String text) {
+    if (text.isEmpty) {
+      return SizedBox(
+        height: 100,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.code_off_rounded,
+                size: 48,
+                color: Colors.white.withOpacity(0.2),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Console output will appear here...',
+                style: TextStyle(
+                  fontFamily: 'monospace',
+                  color: Colors.white.withOpacity(0.4),
+                  fontSize: 14,
+                  height: 1.6,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final lines = text.split('\n');
+    return RichText(
+      textWidthBasis: TextWidthBasis.longestLine,
+      text: TextSpan(
+        children: lines.map((line) {
+          TextSpan span;
+          
+          if (line.contains('⏳ Running code...')) {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFFfbbf24),
+                fontSize: 14,
+                height: 1.6,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          } else if (line.contains('📤 Output:')) {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFF60a5fa),
+                fontSize: 14,
+                height: 1.6,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          } else if (line.contains('✅ Process finished')) {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFF22c55e),
+                fontSize: 14,
+                height: 1.6,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          } else if (line.contains('❌ Error:') || line.contains('Error:')) {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFFef4444),
+                fontSize: 14,
+                height: 1.6,
+                fontWeight: FontWeight.w600,
+              ),
+            );
+          } else if (line.trim().startsWith('(') && line.trim().endsWith(')')) {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFF94a3b8),
+                fontSize: 14,
+                height: 1.6,
+                fontStyle: FontStyle.italic,
+              ),
+            );
+          } else if (line.trim().startsWith('💡')) {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFFa78bfa),
+                fontSize: 14,
+                height: 1.6,
+              ),
+            );
+          } else if (line.trim().isNotEmpty && !line.trim().startsWith('(')) {
+            // Regular output lines
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFF4ade80),
+                fontSize: 14,
+                height: 1.6,
+                fontWeight: FontWeight.w500,
+              ),
+            );
+          } else {
+            span = TextSpan(
+              text: '$line\n',
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                color: Color(0xFF64748b),
+                fontSize: 14,
+                height: 1.6,
+              ),
+            );
+          }
+          
+          return span;
+        }).toList(),
       ),
     );
   }
@@ -318,14 +454,7 @@ class HomeView extends StatelessWidget {
                     width: 400,
                     height: double.infinity,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          const Color(0xFF1e293b).withOpacity(0.95),
-                          const Color(0xFF0f172a).withOpacity(0.95),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
+                      color: const Color(0xFF1a1a1a),
                       border: Border(
                         left: BorderSide(
                           color: Colors.white.withOpacity(0.1),
@@ -339,9 +468,7 @@ class HomeView extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(20.0),
                           decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-                            ),
+                            color: Color(0xFF2a2a2a),
                           ),
                           child: Row(
                             children: [
@@ -380,7 +507,7 @@ class HomeView extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF667eea).withOpacity(0.1),
+                                  color: Colors.white.withOpacity(0.05),
                                   blurRadius: 10,
                                   spreadRadius: 1,
                                 ),
@@ -392,9 +519,9 @@ class HomeView extends StatelessWidget {
                                 hintStyle: TextStyle(
                                   color: Colors.white.withOpacity(0.4),
                                 ),
-                                prefixIcon: const Icon(
+                                prefixIcon: Icon(
                                   Icons.search,
-                                  color: Color(0xFF667eea),
+                                  color: Colors.white.withOpacity(0.6),
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -404,8 +531,8 @@ class HomeView extends StatelessWidget {
                                 fillColor: Colors.white.withOpacity(0.05),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: const BorderSide(
-                                    color: Color(0xFF667eea),
+                                  borderSide: BorderSide(
+                                    color: Colors.white.withOpacity(0.3),
                                     width: 2,
                                   ),
                                 ),
@@ -481,6 +608,64 @@ class HomeView extends StatelessWidget {
   }
 }
 
+/// Pulsing indicator widget for running status
+class _PulsingIndicator extends StatefulWidget {
+  final Color color;
+
+  const _PulsingIndicator({required this.color});
+
+  @override
+  State<_PulsingIndicator> createState() => _PulsingIndicatorState();
+}
+
+class _PulsingIndicatorState extends State<_PulsingIndicator>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.3, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: widget.color,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: widget.color.withOpacity(_animation.value * 0.6),
+                blurRadius: 8,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 /// Custom gradient button widget with hover effect
 class _GradientButton extends StatefulWidget {
   final VoidCallback onPressed;
@@ -530,14 +715,14 @@ class _GradientButtonState extends State<_GradientButton> {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
-                letterSpacing: 0.5,
+                letterSpacing: 0.8,
               ),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               foregroundColor: Colors.white,
               shadowColor: Colors.transparent,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
