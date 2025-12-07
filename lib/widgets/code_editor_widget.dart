@@ -58,12 +58,20 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1a1a1a),
+            color: const Color(0xFF1e1e1e),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withOpacity(0.15),
               width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 20,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,7 +100,7 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
                     ),
                     const SizedBox(width: 10),
                     const Text(
-                      'Code Editor',
+                      '🧑‍💻 Code Editor',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -101,15 +109,41 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
                       ),
                     ),
                     const Spacer(),
+                    // Toolbar buttons
+                    _ToolbarButton(
+                      icon: Icons.copy_rounded,
+                      tooltip: 'Copy Code',
+                      onPressed: _controller.copyCode,
+                    ),
+                    const SizedBox(width: 8),
+                    _ToolbarButton(
+                      icon: Icons.format_align_left_rounded,
+                      tooltip: 'Format Code',
+                      onPressed: _controller.formatCode,
+                    ),
+                    const SizedBox(width: 8),
+                    _ToolbarButton(
+                      icon: Icons.clear_rounded,
+                      tooltip: 'Clear Code',
+                      onPressed: _controller.clearCode,
+                    ),
+                    const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2a2a2a),
+                        color: Colors.white.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
-                          width: 1,
+                          color: Colors.white.withOpacity(0.25),
+                          width: 1.5,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.white.withOpacity(0.1),
+                            blurRadius: 4,
+                            spreadRadius: 0,
+                          ),
+                        ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -142,7 +176,7 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
               // Code editor field
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: code_field.CodeTheme(
                     data: code_field.CodeThemeData(styles: monokaiSublimeTheme),
                     child: SingleChildScrollView(
@@ -150,15 +184,20 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
                         controller: _codeController,
                         textStyle: const TextStyle(
                           fontFamily: 'monospace',
-                          fontSize: 14,
-                          height: 1.5,
+                          fontSize: 15,
+                          height: 1.6,
+                          letterSpacing: 0.3,
                         ),
                         lineNumberStyle: code_field.LineNumberStyle(
                           width: 50,
                           textStyle: TextStyle(
-                            color: Colors.white.withOpacity(0.3),
-                            fontSize: 12,
+                            color: Colors.white.withOpacity(0.5),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: 'monospace',
                           ),
+                          background: const Color(0xFF252525),
+                          margin: 10,
                         ),
                         expands: false,
                       ),
@@ -167,6 +206,49 @@ class _CodeEditorWidgetState extends State<CodeEditorWidget> {
                 ),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Toolbar button widget for code editor actions
+class _ToolbarButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  const _ToolbarButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(8),
+          child: Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.1),
+                width: 1,
+              ),
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: Colors.white.withOpacity(0.7),
+            ),
           ),
         ),
       ),

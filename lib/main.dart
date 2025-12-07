@@ -25,6 +25,12 @@ class MyApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFF0f172a),
         useMaterial3: true,
+        scrollbarTheme: ScrollbarThemeData(
+          thickness: MaterialStateProperty.all(6),
+          radius: const Radius.circular(3),
+          thumbColor: MaterialStateProperty.all(Colors.white.withOpacity(0.3)),
+          minThumbLength: 50,
+        ),
         cardTheme: CardThemeData(
           elevation: 8,
           shape: RoundedRectangleBorder(

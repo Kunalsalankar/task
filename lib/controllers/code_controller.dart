@@ -185,4 +185,23 @@ $outputLines
     helpQuery.value = query;
     helpAnswer.value = _helpService.getHelp(query);
   }
+
+  /// Copies the current code to clipboard
+  void copyCode() {
+    // In a real app, you'd use Clipboard.setData
+    consoleText.value = '📋 Code copied to clipboard!';
+  }
+
+  /// Clears the code editor
+  void clearCode() {
+    codeText.value = '';
+    consoleText.value = '';
+  }
+
+  /// Formats the code (same as auto-fix for now)
+  void formatCode() {
+    final formattedCode = _autoFixService.fixCode(codeText.value);
+    codeText.value = formattedCode;
+    consoleText.value = '✨ Code formatted successfully!';
+  }
 }

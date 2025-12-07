@@ -69,7 +69,7 @@ class HomeView extends StatelessWidget {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          color: Color(0xFF0f0f0f),
+          color: Color(0xFF0a0a0a),
         ),
         child: Stack(
           children: [
@@ -85,18 +85,18 @@ class HomeView extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.fromLTRB(20.0, 16.0, 20.0, 8.0),
                     child: CodeEditorWidget(),
                   ),
                 ),
                 
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
                 
                 // Console output area
                 Expanded(
                   flex: 2,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                     child: _buildConsole(controller),
                   ),
                 ),
@@ -119,7 +119,24 @@ class HomeView extends StatelessWidget {
   /// Builds the action buttons (Run and Auto Fix)
   Widget _buildActionButtons(CodeController controller) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFF151515),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.1),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           // Run button with gradient
@@ -155,7 +172,7 @@ class HomeView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               color: const Color(0xFF1a1a1a),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: Colors.white.withOpacity(0.1),
                 width: 1,
@@ -205,9 +222,17 @@ class HomeView extends StatelessWidget {
             color: const Color(0xFF1a1a1a),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withOpacity(0.1),
+              color: Colors.white.withOpacity(0.15),
               width: 1.5,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.5),
+                blurRadius: 20,
+                spreadRadius: 2,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -226,7 +251,7 @@ class HomeView extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   const Text(
-                    'Console Output',
+                    '🖥️ Console Output',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -276,10 +301,15 @@ class HomeView extends StatelessWidget {
                   ),
                   child: Obx(() {
                     final text = controller.consoleText.value;
-                    return SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      padding: const EdgeInsets.all(14),
-                      child: _buildFormattedConsoleText(text),
+                    return Scrollbar(
+                      thumbVisibility: true,
+                      thickness: 6,
+                      radius: const Radius.circular(3),
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.all(14),
+                        child: _buildFormattedConsoleText(text),
+                      ),
                     );
                   }),
                 ),
@@ -323,105 +353,131 @@ class HomeView extends StatelessWidget {
     }
 
     final lines = text.split('\n');
-    return RichText(
-      textWidthBasis: TextWidthBasis.longestLine,
-      text: TextSpan(
-        children: lines.map((line) {
-          TextSpan span;
-          
-          if (line.contains('⏳ Running code...')) {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFFfbbf24),
-                fontSize: 14,
-                height: 1.6,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          } else if (line.contains('📤 Output:')) {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFF60a5fa),
-                fontSize: 14,
-                height: 1.6,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          } else if (line.contains('✅ Process finished')) {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFF22c55e),
-                fontSize: 14,
-                height: 1.6,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          } else if (line.contains('❌ Error:') || line.contains('Error:')) {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFFef4444),
-                fontSize: 14,
-                height: 1.6,
-                fontWeight: FontWeight.w600,
-              ),
-            );
-          } else if (line.trim().startsWith('(') && line.trim().endsWith(')')) {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFF94a3b8),
-                fontSize: 14,
-                height: 1.6,
-                fontStyle: FontStyle.italic,
-              ),
-            );
-          } else if (line.trim().startsWith('💡')) {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFFa78bfa),
-                fontSize: 14,
-                height: 1.6,
-              ),
-            );
-          } else if (line.trim().isNotEmpty && !line.trim().startsWith('(')) {
-            // Regular output lines
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFF4ade80),
-                fontSize: 14,
-                height: 1.6,
-                fontWeight: FontWeight.w500,
-              ),
-            );
-          } else {
-            span = TextSpan(
-              text: '$line\n',
-              style: const TextStyle(
-                fontFamily: 'monospace',
-                color: Color(0xFF64748b),
-                fontSize: 14,
-                height: 1.6,
-              ),
-            );
-          }
-          
-          return span;
-        }).toList(),
-      ),
-    );
+    final spans = <TextSpan>[];
+    bool hasOutputLabel = false;
+    
+    for (int i = 0; i < lines.length; i++) {
+      final line = lines[i];
+      TextSpan span;
+      
+      if (line.contains('⏳ Running code...')) {
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFFfbbf24),
+            fontSize: 15,
+            height: 1.6,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.3,
+          ),
+        );
+        spans.add(span);
+      } else if (line.contains('📤 Output:')) {
+        hasOutputLabel = true;
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFF60a5fa),
+            fontSize: 17,
+            height: 1.6,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.3,
+          ),
+        );
+        spans.add(span);
+        // Add divider after Output: label
+        if (i < lines.length - 1 && lines[i + 1].trim().isNotEmpty) {
+          spans.add(TextSpan(
+            text: '─────────────────────────\n',
+            style: TextStyle(
+              fontFamily: 'monospace',
+              color: Colors.white.withOpacity(0.2),
+              fontSize: 14,
+              height: 1.6,
+            ),
+          ));
+        }
+      } else if (line.contains('✅ Process finished')) {
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFF22c55e),
+            fontSize: 14,
+            height: 1.6,
+            fontWeight: FontWeight.w600,
+          ),
+        );
+        spans.add(span);
+      } else if (line.contains('❌ Error:') || line.contains('Error:') || line.contains('Compilation Error:')) {
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFFef4444),
+            fontSize: 14,
+            height: 1.6,
+            fontWeight: FontWeight.w600,
+          ),
+        );
+        spans.add(span);
+      } else if (line.trim().startsWith('(') && line.trim().endsWith(')')) {
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFF94a3b8),
+            fontSize: 14,
+            height: 1.6,
+            fontStyle: FontStyle.italic,
+          ),
+        );
+        spans.add(span);
+      } else if (line.trim().startsWith('💡')) {
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFFa78bfa),
+            fontSize: 14,
+            height: 1.6,
+          ),
+        );
+        spans.add(span);
+      } else if (line.trim().isNotEmpty && !line.trim().startsWith('(')) {
+        // Regular output lines
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFF4ade80),
+            fontSize: 15,
+            height: 1.6,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.2,
+          ),
+        );
+        spans.add(span);
+      } else {
+        span = TextSpan(
+          text: '$line\n',
+          style: const TextStyle(
+            fontFamily: 'monospace',
+            color: Color(0xFF64748b),
+            fontSize: 14,
+            height: 1.6,
+          ),
+        );
+        spans.add(span);
+      }
+        }
+        
+        return RichText(
+          textWidthBasis: TextWidthBasis.longestLine,
+          text: TextSpan(children: spans),
+        );
   }
 
   /// Builds the help panel with slide animation and glassmorphism
